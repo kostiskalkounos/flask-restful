@@ -4,7 +4,7 @@ from flask_jwt import jwt_required
 
 class Item(Resource):
     parser = reqparse.RequestParser()
-    parser.add_arguement('price',
+    parser.add_argument('price',
                          type=float,
                          required=True,
                          help='This field cannot be left blank.'
@@ -102,4 +102,16 @@ class Item(Resource):
 
 class ItemList(Resource):
     def get(self):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM items"
+        result = cursor.execute(query)
+        items = []
+
+        for row in result:
+            items.append({'name': row[0], 'price': row[1]})
+
+        connection.close()
+
         return {'items': items}
